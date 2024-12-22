@@ -9,7 +9,9 @@ namespace FSAClient.Classes
     public class ServerCommunication
     {
         public List<AvailableClient> AvailableClients { get; private set; }
+
         public record RegisterData(string Name, string IpAddress, int Port);
+
         private WebSocket ws;
         private Client _client;
         private FSA _fsa;
@@ -25,7 +27,8 @@ namespace FSAClient.Classes
         public void RegisterClient()
         {
             ws.Connect();
-            RegisterData registerData = new RegisterData(UserData.Name, UserData.PublicIP.ToString(), UserData.PublicPort);
+            RegisterData registerData = new RegisterData(UserData.Name, UserData.PublicIP.ToString(),
+                UserData.PublicPort);
             string serializedClient = JsonSerializer.Serialize(registerData);
             string message = $"ClientRegistration;{serializedClient}";
             ws.Send(message);
@@ -43,7 +46,7 @@ namespace FSAClient.Classes
             _fsa.PopulateClientList();
         }
 
-        record RequestResponse(string Type, string IPAddress, int Port);
+        record RequestResponse(string Type, string IPAddress, int Port, string Protocol);
 
         private void Ws_OnMessage(object sender, MessageEventArgs e)
         {
@@ -64,11 +67,29 @@ namespace FSAClient.Classes
                         incomingRequest.Show();
                     });
                     break;
+                case "IncomingChatRequest":
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ConnectionChatAlert incomingChatRequest = new ConnectionChatAlert(message[1], ws);
+                        incomingChatRequest.Show();
+                    });
+                    break;
                 case "RequestResponse":
                     RequestResponse requestResponse = JsonSerializer.Deserialize<RequestResponse>(message[1]);
-                    if (requestResponse.Type == "accept") _client.SendData(requestResponse.Port, IPAddress.Parse(requestResponse.IPAddress));
+                    if (requestResponse.Type == "accept" && requestResponse.Protocol == "sendingFile")
+                        _client.SendData(requestResponse.Port, IPAddress.Parse(requestResponse.IPAddress));
+                    else if (requestResponse.Type == "accept" && requestResponse.Protocol == "openChat")
+                        _client.OpenChatConnection(requestResponse.Port, IPAddress.Parse(requestResponse.IPAddress));
                     else MessageBox.Show("Ihre Anfrage wurde abgelehnt!");
                     break;
+
+                /*case "ChatRequestResponse":
+                        RequestResponse chatRequestResponse = JsonSerializer.Deserialize<RequestResponse>(message[1]);
+                        if (chatRequestResponse.Type == "accept")
+                            _client.OpenChatConnection(chatRequestResponse.Port,
+                                IPAddress.Parse(chatRequestResponse.IPAddress));
+                        else MessageBox.Show("Ihre Anfrage wurde abgelehnt!");
+                        break;*/
             }
         }
     }

@@ -29,7 +29,9 @@ namespace FSAClient
                 TextBoxLocalIP.Text = localIP.ToString();
                 TextBoxPublicIP.Text = publicIP.ToString();
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         private void ButtonFinishSetup_Click(object sender, RoutedEventArgs e)
@@ -43,7 +45,7 @@ namespace FSAClient
             try
             {
                 if (UserData.StoreUserData(TextBoxName.Text, TextBoxLocalIP.Text, TextBoxLocalPort.Text,
-                        TextBoxPublicIP.Text, TextBoxPublicPort.Text))
+                    TextBoxPublicIP.Text, TextBoxPublicPort.Text))
                 {
                     var newPage = new FSA(TextBoxServerAddress.Text);
                     MainWindow.Instance.NavigateToPage(newPage);

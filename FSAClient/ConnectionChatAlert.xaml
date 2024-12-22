@@ -1,0 +1,25 @@
+﻿<Window x:Class="FSAClient.ConnectionChatAlert"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FSAClient"
+        mc:Ignorable="d"
+        Title="ConnectionAlert" Height="400" Width="600">
+    <Grid Background="#FFFFF0D0">
+        <Label Content="Someone would like to establish a connection." HorizontalAlignment="Center" Margin="0,65,0,0" VerticalAlignment="Top"/>
+        <Label Content="P2P Connection Request" HorizontalAlignment="Center" Margin="0,18,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="24"/>
+        <Label Content="Remote client name:" HorizontalAlignment="Left" Margin="144,114,0,0" VerticalAlignment="Top"/>
+        <Label Content="Remote client Id:" HorizontalAlignment="Left" Margin="144,140,0,0" VerticalAlignment="Top"/>
+        <Label Content="Remote client Port:" HorizontalAlignment="Left" Margin="144,192,0,0" VerticalAlignment="Top"/>
+        <Label Content="{Binding UserName}" HorizontalAlignment="Left" Margin="267,114,0,0" VerticalAlignment="Top" Width="279"/>
+        <Label Content="{Binding UserId}" HorizontalAlignment="Left" Margin="267,140,0,0" VerticalAlignment="Top" Width="279"/>
+        <Label Content="{Binding IpAddress}" HorizontalAlignment="Left" Margin="267,166,0,0" VerticalAlignment="Top" Width="279"/>
+        <Label Content="{Binding Port}" HorizontalAlignment="Left" Margin="267,192,0,0" VerticalAlignment="Top" Width="279"/>
+        <Label Content="Remote client IP:" HorizontalAlignment="Left" Margin="144,166,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="ButtonAcceptConnection" Content="Accept" HorizontalAlignment="Left" Margin="267,282,0,0" VerticalAlignment="Top" Width="101" Click="ButtonAcceptConnection_Click"/>
+        <Button x:Name="ButtonDeclineConnection" Content="Decline" HorizontalAlignment="Left" Margin="144,282,0,0" VerticalAlignment="Top" Width="108" Background="#FFF59292" Click="ButtonDeclineConnection_Click"/>
+        <CheckBox x:Name="CheckBoxTrustRequest" Content="I trust this connection." HorizontalAlignment="Left" Margin="385,285,0,0" VerticalAlignment="Top" Checked="CheckBoxTrustRequest_Checked" Unchecked="CheckBoxTrustRequest_Unchecked"/>
+
+    </Grid>
+</Window>

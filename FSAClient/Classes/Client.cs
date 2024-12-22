@@ -40,7 +40,7 @@ namespace FSAClient.Classes
             }
         }
 
-        public async void SendData( int publicPort, IPAddress publicIP)
+        public async void SendData(int publicPort, IPAddress publicIP)
         {
             try
             {
@@ -56,6 +56,28 @@ namespace FSAClient.Classes
             catch
             {
                 MessageBox.Show("Fehler bei der Dateiübertragung.", "Error");
+            }
+        }
+
+        public async void OpenChatConnection(int publicPort, IPAddress publicIP)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    TcpClient client = new TcpClient();
+                    client.Connect(publicIP, publicPort);
+                    NetworkStream stream = client.GetStream();
+                    byte[] chatData = new byte[4];
+                    byte[] totalSize = BitConverter.GetBytes(chatData.Length);
+                    totalSize.CopyTo(chatData, 0);
+                    stream.Write(chatData, 0, chatData.Length);
+                    MessageBox.Show("Chat connection established!");
+                });
+            }
+            catch
+            {
+                MessageBox.Show("Fehler bei der Chatverbindung.", "Error");
             }
         }
     }

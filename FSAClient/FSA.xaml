@@ -30,5 +30,6 @@
         <Label Content="Your client:" HorizontalAlignment="Left" Margin="40,383,0,0" VerticalAlignment="Top" FontWeight="Bold" RenderTransformOrigin="-0.134,0.539"/>
         <Button x:Name="ButtonEstablishConnection" Content="Establish Connection" HorizontalAlignment="Left" Margin="590,323,0,0" VerticalAlignment="Top" Width="162" Height="55" Click="ButtonEstablishConnection_Click"/>
         <Label x:Name="LabelThisClientInfo" Content="{}{NAME:ID}" HorizontalAlignment="Left" Margin="118,383,0,0" VerticalAlignment="Top" Width="207"/>
+        <Button Content="Establish chat connection" HorizontalAlignment="Left" Height="26" Margin="590,383,0,0" VerticalAlignment="Top" Width="162" Click="ButtonEstablishChatConnection_Click"/>
     </Grid>
 </Page>

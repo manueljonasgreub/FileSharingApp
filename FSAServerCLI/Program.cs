@@ -47,7 +47,8 @@ namespace FSAServerCLI
                 case "ClientRegistration":
                     RegisterData registerData = JsonSerializer.Deserialize<RegisterData>(message[1]);
                     _clientId = Program._nextClientId++;
-                    var clientDetails = new RegisteredClientDetails(_clientId, registerData.Name, registerData.IpAddress, registerData.Port);
+                    var clientDetails = new RegisteredClientDetails(_clientId, registerData.Name, registerData.IpAddress,
+                        registerData.Port);
                     Program._registeredClients.Add(clientDetails);
 
                     // Send ClientId to the registering client
@@ -64,7 +65,8 @@ namespace FSAServerCLI
                     {
                         UserName = Program._registeredClients.First(client => client.Id == fileSendRequest.UserId).Name,
                         UserId = fileSendRequest.UserId,
-                        IpAddress = Program._registeredClients.First(client => client.Id == fileSendRequest.UserId).IpAddress,
+                        IpAddress =
+                            Program._registeredClients.First(client => client.Id == fileSendRequest.UserId).IpAddress,
                         Port = Program._registeredClients.First(client => client.Id == fileSendRequest.UserId).Port,
                         FileName = fileSendRequest.FileName,
                         FileSize = fileSendRequest.FileSize
@@ -80,14 +82,46 @@ namespace FSAServerCLI
                         }
                     }
                     break;
+                case "ChatSendRequest":
+                    RequestData chatSendRequest = JsonSerializer.Deserialize<RequestData>(message[1]);
+                    ConnectionAlertData chatConnectionAlertData = new ConnectionAlertData
+                    {
+                        UserName = Program._registeredClients.First(client => client.Id == chatSendRequest.UserId).Name,
+                        UserId = chatSendRequest.UserId,
+                        IpAddress =
+                            Program._registeredClients.First(client => client.Id == chatSendRequest.UserId).IpAddress,
+                        Port = Program._registeredClients.First(client => client.Id == chatSendRequest.UserId).Port,
+                        FileName = chatSendRequest.FileName,
+                        FileSize = chatSendRequest.FileSize
+                    };
+                    string chatConnectionAlertMessage =
+                        $"IncomingChatRequest;{JsonSerializer.Serialize(chatConnectionAlertData)}";
+                    foreach (var client in _connectedClients)
+                    {
+                        if (client._clientId == chatSendRequest.SenderId)
+                        {
+                            client.Send(chatConnectionAlertMessage);
+                            Console.WriteLine($"Sent message to client: {chatConnectionAlertMessage}");
+                            break;
+                        }
+                    }
+                    break;
                 case "P2PConnectionResponse":
                     P2PConnectionData p2pConnectionData = JsonSerializer.Deserialize<P2PConnectionData>(message[1]);
 
                     RequestResponse requestResponse;
-                    if (p2pConnectionData.answer == "accept")
+                    if (p2pConnectionData.answer == "accept" && p2pConnectionData.Protocol == "sendingFile")
                     {
                         requestResponse = new RequestResponse(p2pConnectionData.answer,
-                            Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId).IpAddress,
+                            Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId)
+                                   .IpAddress,
+                            Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId).Port);
+                    }
+                    else if (p2pConnectionData.answer == "accept" && p2pConnectionData.Protocol == "openChat")
+                    {
+                        requestResponse = new RequestResponse(p2pConnectionData.answer,
+                            Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId)
+                                   .IpAddress,
                             Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId).Port);
                     }
                     else requestResponse = new RequestResponse(p2pConnectionData.answer, null, 0);
@@ -118,8 +152,8 @@ namespace FSAServerCLI
         private void UpdateAvailableClients()
         {
             Program._availableClients = Program._registeredClients
-                .Select(client => new AvailableClient(client.Id, client.Name))
-                .ToList();
+                                               .Select(client => new AvailableClient(client.Id, client.Name))
+                                               .ToList();
 
             // Send available clients to all connected clients
             string availableClientsMessage = "AvailableClients;" + JsonSerializer.Serialize(Program._availableClients);
@@ -132,9 +166,13 @@ namespace FSAServerCLI
     }
 
     public record RegisterData(string Name, string IpAddress, int Port);
+
     public record RequestData(int UserId, int SenderId, string FileName, string FileSize);
+
     public record RegisteredClientDetails(int Id, string Name, string IpAddress, int Port);
-    public record P2PConnectionData(int SenderId, int ReceiverId, string answer);
+
+    public record P2PConnectionData(int SenderId, int ReceiverId, string answer, string Protocol);
+
     record RequestResponse(string Type, string IPAddress, int Port);
 
     public class AvailableClient

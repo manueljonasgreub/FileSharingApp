@@ -1,25 +1,37 @@
-﻿using System.Text.Json;
+﻿using FSAClient.Classes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
-using FSAClient.Classes;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace FSAClient
 {
     /// <summary>
-    /// Interaction logic for ConnectionAlert.xaml
+    /// Interaction logic for ConnectionChatAlert.xaml
     /// </summary>
-    public partial class ConnectionAlert : Window
+    public partial class ConnectionChatAlert : Window
     {
         record P2PConnectionData(int SenderId, int ReceiverId, string answer, string Protocol);
 
-        ConnectionAlertData IncomingConnection;
+        ConnectionChatAlertData IncomingConnection;
         WebSocketSharp.WebSocket webSocket;
 
-        public ConnectionAlert(string serializedConnectionAlert, WebSocketSharp.WebSocket ws)
+        public ConnectionChatAlert(string serializedConnectionAlert, WebSocketSharp.WebSocket ws)
         {
             InitializeComponent();
+
             ButtonAcceptConnection.IsEnabled = false;
-            IncomingConnection = JsonSerializer.Deserialize<ConnectionAlertData>(serializedConnectionAlert);
+            IncomingConnection = JsonSerializer.Deserialize<ConnectionChatAlertData>(serializedConnectionAlert);
             this.DataContext = IncomingConnection;
             webSocket = ws;
         }
@@ -36,22 +48,22 @@ namespace FSAClient
             ButtonAcceptConnection.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
         }
 
-        private void ButtonDeclineConnection_Click(object sender, RoutedEventArgs e)
+        private void ButtonAcceptConnection_Click(object sender, RoutedEventArgs e)
         {
+            Listener listener = new Listener();
+            listener.Listen();
             P2PConnectionData p2pConnectionData = new P2PConnectionData(UserData.UserId, IncomingConnection.UserId,
-                "decline", "sendingFile");
+                "accept", "openChat");
             string serializedP2PConnection = JsonSerializer.Serialize(p2pConnectionData);
             string message = $"P2PConnectionResponse;{serializedP2PConnection}";
             webSocket.Send(message);
             this.Close();
         }
 
-        private void ButtonAcceptConnection_Click(object sender, RoutedEventArgs e)
+        private void ButtonDeclineConnection_Click(object sender, RoutedEventArgs e)
         {
-            Listener listener = new Listener();
-            listener.Listen();
             P2PConnectionData p2pConnectionData = new P2PConnectionData(UserData.UserId, IncomingConnection.UserId,
-                "accept", "sendingFile");
+                "decline", "openChat");
             string serializedP2PConnection = JsonSerializer.Serialize(p2pConnectionData);
             string message = $"P2PConnectionResponse;{serializedP2PConnection}";
             webSocket.Send(message);
