@@ -79,7 +79,7 @@ namespace FSAClient.Classes
                     if (requestResponse.Type == "accept" && requestResponse.Protocol == "sendingFile")
                         _client.SendData(requestResponse.Port, IPAddress.Parse(requestResponse.IPAddress));
                     else if (requestResponse.Type == "accept" && requestResponse.Protocol == "openChat")
-                        _client.OpenChatConnection(requestResponse.Port, IPAddress.Parse(requestResponse.IPAddress));
+                        _client.OpenChatConnection($"http://{requestResponse.IPAddress}:{requestResponse.Port}/chatHub");
                     else MessageBox.Show("Ihre Anfrage wurde abgelehnt!");
                     break;
 
