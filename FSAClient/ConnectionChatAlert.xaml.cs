@@ -60,14 +60,10 @@ namespace FSAClient
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                MessageBox.Show(
-                    $"LorenzoClient P2PConnectionResponse ConnectionChatAlert: Connecting to chat at http://{IncomingConnection
-                        .IpAddress}:{IncomingConnection.Port}/chatHub");
                 var chatWindow = new ChatWindow(
-                    $"http://{IncomingConnection.IpAddress}:{IncomingConnection.Port}/chatHub",
-                    $"{IncomingConnection.UserName}",
-                    $"{IncomingConnection.IpAddress}",
-                    $"{IncomingConnection.Port}"
+                    IncomingConnection.IpAddress,
+                    IncomingConnection.Port.ToString(),
+                    IncomingConnection.UserName
                     );
                 chatWindow.Show();
             });

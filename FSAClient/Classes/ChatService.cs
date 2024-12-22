@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.AspNetCore.SignalR.Client;
-
+using WebSocketSharp;
 
 namespace FSAClient.Classes
 {
     public class ChatService
     {
-        private HubConnection _connection;
+        private WebSocket _webSocket;
         private readonly ChatViewModel _viewModel;
 
         public ChatService(ChatViewModel chatViewModel)
@@ -19,57 +16,41 @@ namespace FSAClient.Classes
             _viewModel = chatViewModel;
         }
 
-        public async Task ConnectToChat(string url)
+        public void ConnectToChat(string url)
         {
-            _connection = new HubConnectionBuilder()
-                .WithUrl(url)
-                .Build();
+            _webSocket = new WebSocket(url);
 
-            _connection.On<string, string>("ReceiveMessage",
-                (user, message) =>
+            _webSocket.OnMessage += (sender, e) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Application.Current.Dispatcher.Invoke(() => { _viewModel.Messages.Add($"{user}: {message}"); });
+                    _viewModel.Messages.Add(e.Data);
                 });
+            };
 
-            try
+            _webSocket.OnOpen += (sender, e) =>
             {
-                await _connection.StartAsync();
                 MessageBox.Show("Connected to chat!");
-            }
-            catch (Exception ex)
+            };
+
+            _webSocket.OnError += (sender, e) =>
             {
-                MessageBox.Show($"Error connecting to chat: {ex.Message}");
-            }
+                MessageBox.Show($"Error connecting to chat: {e.Message}");
+            };
+
+            _webSocket.Connect();
         }
 
-        public async Task SendMessage(string user, string message)
+        public void SendMessage(string user, string message)
         {
-            if (_connection == null)
+            if (_webSocket == null || !_webSocket.IsAlive)
             {
-                MessageBox.Show("Connection is null.");
+                MessageBox.Show("WebSocket is not connected.");
                 return;
             }
 
-            // Warte, bis die Verbindung vollständig hergestellt ist
-            while (_connection.State == HubConnectionState.Connecting)
-            {
-                await Task.Delay(100);
-            }
-
-            if (_connection.State != HubConnectionState.Connected)
-            {
-                MessageBox.Show($"Connection state: {_connection.State}");
-                return;
-            }
-
-            try
-            {
-                await _connection.InvokeAsync("SendMessage", user, message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error sending message: {ex.Message}");
-            }
+            var fullMessage = $"{user}: {message}";
+            _webSocket.Send(fullMessage);
         }
     }
 }
