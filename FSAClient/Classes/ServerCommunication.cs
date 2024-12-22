@@ -79,7 +79,19 @@ namespace FSAClient.Classes
                     if (requestResponse.Type == "accept" && requestResponse.Protocol == "sendingFile")
                         _client.SendData(requestResponse.Port, IPAddress.Parse(requestResponse.IPAddress));
                     else if (requestResponse.Type == "accept" && requestResponse.Protocol == "openChat")
-                        _client.OpenChatConnection($"http://{requestResponse.IPAddress}:{requestResponse.Port}/chatHub");
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show(
+                                $"PascalClient RequestResponse ServerCommmnuication: Connecting to chat at http://{requestResponse
+                                    .IPAddress}:{requestResponse.Port}/chatHub");
+                            var newPage =
+                                new ChatWindow($"http://{requestResponse.IPAddress}:{requestResponse.Port}/chatHub",
+                                    $"{_fsa.SelectedUserName}", $"{requestResponse.IPAddress}",
+                                    $"{requestResponse.Port}");
+                            newPage.Show();
+                        });
+                    }
                     else MessageBox.Show("Ihre Anfrage wurde abgelehnt!");
                     break;
 

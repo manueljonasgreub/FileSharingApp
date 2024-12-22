@@ -57,6 +57,21 @@ namespace FSAClient
             string serializedP2PConnection = JsonSerializer.Serialize(p2pConnectionData);
             string message = $"P2PConnectionResponse;{serializedP2PConnection}";
             webSocket.Send(message);
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(
+                    $"LorenzoClient P2PConnectionResponse ConnectionChatAlert: Connecting to chat at http://{IncomingConnection
+                        .IpAddress}:{IncomingConnection.Port}/chatHub");
+                var chatWindow = new ChatWindow(
+                    $"http://{IncomingConnection.IpAddress}:{IncomingConnection.Port}/chatHub",
+                    $"{IncomingConnection.UserName}",
+                    $"{IncomingConnection.IpAddress}",
+                    $"{IncomingConnection.Port}"
+                    );
+                chatWindow.Show();
+            });
+
             this.Close();
         }
 

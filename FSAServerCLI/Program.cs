@@ -115,16 +115,18 @@ namespace FSAServerCLI
                         requestResponse = new RequestResponse(p2pConnectionData.answer,
                             Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId)
                                    .IpAddress,
-                            Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId).Port);
+                            Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId).Port,
+                            "sendingFile");
                     }
                     else if (p2pConnectionData.answer == "accept" && p2pConnectionData.Protocol == "openChat")
                     {
                         requestResponse = new RequestResponse(p2pConnectionData.answer,
                             Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId)
                                    .IpAddress,
-                            Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId).Port);
+                            Program._registeredClients.First(client => client.Id == p2pConnectionData.SenderId).Port,
+                            "openChat");
                     }
-                    else requestResponse = new RequestResponse(p2pConnectionData.answer, null, 0);
+                    else requestResponse = new RequestResponse(p2pConnectionData.answer, null, 0, "null");
 
                     string p2pRequestResponse = "RequestResponse;" + JsonSerializer.Serialize(requestResponse);
 
@@ -173,7 +175,7 @@ namespace FSAServerCLI
 
     public record P2PConnectionData(int SenderId, int ReceiverId, string answer, string Protocol);
 
-    record RequestResponse(string Type, string IPAddress, int Port);
+    record RequestResponse(string Type, string IPAddress, int Port, string Protocol);
 
     public class AvailableClient
     {

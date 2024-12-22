@@ -58,10 +58,5 @@ namespace FSAClient.Classes
                 MessageBox.Show("Fehler bei der Dateiübertragung.", "Error");
             }
         }
-
-        public async void OpenChatConnection(string connectionLink)
-        {
-            ChatService chatService = new ChatService();
-        }
     }
 }

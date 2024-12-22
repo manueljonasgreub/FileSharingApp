@@ -20,6 +20,8 @@ namespace FSAClient
         public AvailableClient selectedClient;
         WebSocket ws;
 
+        public string SelectedUserName => selectedClient.Name;
+
         public FSA(string externalServerAddress)
         {
             InitializeComponent();
@@ -58,16 +60,10 @@ namespace FSAClient
 
         private void ButtonEstablishChatConnection_Click(object sender, RoutedEventArgs e)
         {
-            client.FileName = null;
-            client.SelectFile();
-
-            if (client.FileName != null)
-            {
-                RequestDataChat chatRequest = new RequestDataChat(UserData.UserId, selectedClient.Id);
-                string serializedRequest = JsonSerializer.Serialize(chatRequest);
-                string message = $"ChatSendRequest;{serializedRequest}";
-                ws.Send(message);
-            }
+            RequestDataChat chatRequest = new RequestDataChat(UserData.UserId, selectedClient.Id);
+            string serializedRequest = JsonSerializer.Serialize(chatRequest);
+            string message = $"ChatSendRequest;{serializedRequest}";
+            ws.Send(message);
         }
 
         private void SelectionChanged(object sender, SelectionChangedEventArgs e)
