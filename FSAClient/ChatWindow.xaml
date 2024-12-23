@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FSAClient"
         mc:Ignorable="d"
-        Title="ChatWindow" Height="450" Width="800">
+        Title="ChatWindow" Height="450" Width="800"
+        Closed="Window_Closed">
     <Grid Background="#FFE6EFED">
-        <TextBox x:Name="TextBoxMessage" HorizontalAlignment="Left" Height="38" Margin="10,358,0,0" TextWrapping="Wrap" Text="Hello there" VerticalAlignment="Top" Width="717"/>
+        <TextBox x:Name="TextBoxMessage" HorizontalAlignment="Left" Height="38" Margin="10,358,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="717"/>
         <Button Content="Send" HorizontalAlignment="Left" Height="39" Margin="732,358,0,0" VerticalAlignment="Top" Width="50" Click="ButtonSendMessage_Click" RenderTransformOrigin="0.54,-0.384"/>
         <Label x:Name="ConnectedUserName" Content="UserName" HorizontalAlignment="Center" Height="45" VerticalAlignment="Top" Width="337" HorizontalContentAlignment="Center" FontSize="20"/>
         <Label x:Name="IPLabel" Content="IP:" HorizontalAlignment="Left" Height="28" Margin="18,81,0,0" VerticalAlignment="Top" Width="28"/>
@@ -21,6 +22,5 @@
         </ListView>
         <Label x:Name="IpContent"  HorizontalAlignment="Left" Height="26" Margin="51,83,0,0" VerticalAlignment="Top" Width="62"/>
         <Label x:Name="PortContent" HorizontalAlignment="Left" Height="31" Margin="199,81,0,0" VerticalAlignment="Top" Width="65"/>
-
     </Grid>
 </Window>

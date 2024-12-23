@@ -1,75 +1,66 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.AspNetCore.SignalR.Client;
-
 
 namespace FSAClient.Classes
 {
     public class ChatService
     {
-        private HubConnection _connection;
+        private readonly TcpClient _client;
         private readonly ChatViewModel _viewModel;
+        private StreamReader _reader;
+        private StreamWriter _writer;
+        private Task _receiveTask;
+        private bool _isRunning;
 
-        public ChatService(ChatViewModel chatViewModel)
+        public ChatService(ChatViewModel chatViewModel, string ip, string port)
         {
             _viewModel = chatViewModel;
+
+            _client = new TcpClient(ip, int.Parse(port));
+            NetworkStream stream = _client.GetStream();
+
+            _reader = new StreamReader(stream);
+            _writer = new StreamWriter(stream) { AutoFlush = true };
+
+            _isRunning = true;
+            _receiveTask = Task.Run(() => ReceiveMessages());
         }
 
-        public async Task ConnectToChat(string url)
+        public void SendMessage(string username, string message)
         {
-            _connection = new HubConnectionBuilder()
-                .WithUrl(url)
-                .Build();
+            _writer.WriteLine($"{username}: {message}");
+            Application.Current.Dispatcher.Invoke(() => _viewModel.Messages.Add($"{username}: {message}"));
+        }
 
-            _connection.On<string, string>("ReceiveMessage",
-                (user, message) =>
+        private void ReceiveMessages()
+        {
+            while (_isRunning)
+            {
+                try
                 {
-                    Application.Current.Dispatcher.Invoke(() => { _viewModel.Messages.Add($"{user}: {message}"); });
-                });
-
-            try
-            {
-                await _connection.StartAsync();
-                MessageBox.Show("Connected to chat!");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error connecting to chat: {ex.Message}");
+                    string message = _reader.ReadLine();
+                    if (message != null)
+                    {
+                        Application.Current.Dispatcher.Invoke(() => _viewModel.Messages.Add(message));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error receiving message: {ex.Message}");
+                    _isRunning = false;
+                }
             }
         }
 
-        public async Task SendMessage(string user, string message)
+        public void Close()
         {
-            if (_connection == null)
-            {
-                MessageBox.Show("Connection is null.");
-                return;
-            }
-
-            // Warte, bis die Verbindung vollständig hergestellt ist
-            while (_connection.State == HubConnectionState.Connecting)
-            {
-                await Task.Delay(100);
-            }
-
-            if (_connection.State != HubConnectionState.Connected)
-            {
-                MessageBox.Show($"Connection state: {_connection.State}");
-                return;
-            }
-
-            try
-            {
-                await _connection.InvokeAsync("SendMessage", user, message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error sending message: {ex.Message}");
-            }
+            _isRunning = false;
+            _reader.Close();
+            _writer.Close();
+            _client.Close();
         }
     }
 }

@@ -82,13 +82,11 @@ namespace FSAClient.Classes
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            MessageBox.Show(
-                                $"PascalClient RequestResponse ServerCommmnuication: Connecting to chat at http://{requestResponse
-                                    .IPAddress}:{requestResponse.Port}/chatHub");
                             var newPage =
-                                new ChatWindow($"http://{requestResponse.IPAddress}:{requestResponse.Port}/chatHub",
-                                    $"{_fsa.SelectedUserName}", $"{requestResponse.IPAddress}",
+                                new ChatWindow(_fsa.SelectedUserName, $"{requestResponse.IPAddress}",
                                     $"{requestResponse.Port}");
+                            ChatServer server = new ChatServer($"{UserData.LocalIP}", UserData.LocalPort);
+                            server.Start();
                             newPage.Show();
                         });
                     }
@@ -96,12 +94,12 @@ namespace FSAClient.Classes
                     break;
 
                 /*case "ChatRequestResponse":
-                        RequestResponse chatRequestResponse = JsonSerializer.Deserialize<RequestResponse>(message[1]);
-                        if (chatRequestResponse.Type == "accept")
-                            _client.OpenChatConnection(chatRequestResponse.Port,
-                                IPAddress.Parse(chatRequestResponse.IPAddress));
-                        else MessageBox.Show("Ihre Anfrage wurde abgelehnt!");
-                        break;*/
+                            RequestResponse chatRequestResponse = JsonSerializer.Deserialize<RequestResponse>(message[1]);
+                            if (chatRequestResponse.Type == "accept")
+                                _client.OpenChatConnection(chatRequestResponse.Port,
+                                    IPAddress.Parse(chatRequestResponse.IPAddress));
+                            else MessageBox.Show("Ihre Anfrage wurde abgelehnt!");
+                            break;*/
             }
         }
     }
