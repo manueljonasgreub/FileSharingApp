@@ -11,7 +11,7 @@ namespace FSAClient.Classes
     {
         private TcpListener _listener;
         private readonly ChatViewModel _viewModel;
-
+        private bool _listeningStatus;
 
         public ChatServiceListener(ChatViewModel viewModel)
         {
@@ -22,6 +22,7 @@ namespace FSAClient.Classes
         {
             _listener = new TcpListener(UserData.LocalIP, UserData.LocalPort);
             _listener.Start();
+            _listeningStatus = true;
             await AcceptClientsAsync();
         }
 
@@ -29,15 +30,11 @@ namespace FSAClient.Classes
         {
             try
             {
-                while (true)
+                while (_listeningStatus)
                 {
                     TcpClient client = await _listener.AcceptTcpClientAsync();
                     _ = Task.Run(() => HandleClientAsync(client));
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
             }
             finally
             {
@@ -60,10 +57,6 @@ namespace FSAClient.Classes
                     Application.Current.Dispatcher.Invoke(() => { _viewModel.AddMessage(message, Brushes.DarkGreen); });
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
             finally
             {
                 client.Close();
@@ -72,6 +65,7 @@ namespace FSAClient.Classes
 
         public void Stop()
         {
+            _listeningStatus = false;
             _listener.Stop();
         }
     }
