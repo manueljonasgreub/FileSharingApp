@@ -69,5 +69,10 @@ namespace FSAClient.Classes
                 client.Close();
             }
         }
+
+        public void Stop()
+        {
+            _listener.Stop();
+        }
     }
 }

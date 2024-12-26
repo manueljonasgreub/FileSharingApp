@@ -69,6 +69,7 @@ namespace FSAClient
 
         private void Window_Closed(object sender, EventArgs eventArgs)
         {
+            _listener.Stop();
         }
     }
 }
