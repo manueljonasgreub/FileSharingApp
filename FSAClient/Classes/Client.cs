@@ -13,6 +13,7 @@ namespace FSAClient.Classes
         public string FileName;
         public string FileSize;
 
+
         byte[] fullClientData;
 
         public void SelectFile()

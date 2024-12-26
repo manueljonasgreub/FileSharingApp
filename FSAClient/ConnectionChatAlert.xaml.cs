@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,18 +51,18 @@ namespace FSAClient
 
         private void ButtonAcceptConnection_Click(object sender, RoutedEventArgs e)
         {
-            Listener listener = new Listener();
-            listener.Listen();
             P2PConnectionData p2pConnectionData = new P2PConnectionData(UserData.UserId, IncomingConnection.UserId,
                 "accept", "openChat");
             string serializedP2PConnection = JsonSerializer.Serialize(p2pConnectionData);
             string message = $"P2PConnectionResponse;{serializedP2PConnection}";
             webSocket.Send(message);
 
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var chatWindow = new ChatWindow(IncomingConnection.UserName, IncomingConnection.IpAddress,
                     $"{IncomingConnection.Port}");
+
                 chatWindow.Show();
             });
 

@@ -82,24 +82,16 @@ namespace FSAClient.Classes
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            var newPage =
-                                new ChatWindow(_fsa.SelectedUserName, $"{requestResponse.IPAddress}",
-                                    $"{requestResponse.Port}");
-                            ChatServer server = new ChatServer($"{UserData.LocalIP}", UserData.LocalPort);
-                            server.Start();
+                            var newPage = new ChatWindow(_fsa.SelectedUserName, requestResponse.IPAddress,
+                                requestResponse.Port.ToString());
                             newPage.Show();
                         });
                     }
-                    else MessageBox.Show("Ihre Anfrage wurde abgelehnt!");
+                    else
+                    {
+                        MessageBox.Show("Ihre Anfrage wurde abgelehnt!");
+                    }
                     break;
-
-                /*case "ChatRequestResponse":
-                            RequestResponse chatRequestResponse = JsonSerializer.Deserialize<RequestResponse>(message[1]);
-                            if (chatRequestResponse.Type == "accept")
-                                _client.OpenChatConnection(chatRequestResponse.Port,
-                                    IPAddress.Parse(chatRequestResponse.IPAddress));
-                            else MessageBox.Show("Ihre Anfrage wurde abgelehnt!");
-                            break;*/
             }
         }
     }

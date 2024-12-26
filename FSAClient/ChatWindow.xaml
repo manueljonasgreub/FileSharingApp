@@ -13,14 +13,14 @@
         <Label x:Name="ConnectedUserName" Content="UserName" HorizontalAlignment="Center" Height="45" VerticalAlignment="Top" Width="337" HorizontalContentAlignment="Center" FontSize="20"/>
         <Label x:Name="IPLabel" Content="IP:" HorizontalAlignment="Left" Height="28" Margin="18,81,0,0" VerticalAlignment="Top" Width="28"/>
         <Label x:Name="PortLabel" Content="Port:" HorizontalAlignment="Left" Height="31" Margin="141,81,0,0" VerticalAlignment="Top" Width="42"/>
-        <ListView ItemsSource="{Binding Messages}" HorizontalAlignment="Center" Height="181" VerticalAlignment="Center" Width="764">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Messages" DisplayMemberBinding="{Binding}" />
-                </GridView>
-            </ListView.View>
+        <ListView ItemsSource="{Binding Messages}" HorizontalAlignment="Center" Height="181" VerticalAlignment="Center" Width="764" Background="Azure">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Message}" Foreground="{Binding Color}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </ListView>
-        <Label x:Name="IpContent"  HorizontalAlignment="Left" Height="26" Margin="51,83,0,0" VerticalAlignment="Top" Width="62"/>
-        <Label x:Name="PortContent" HorizontalAlignment="Left" Height="31" Margin="199,81,0,0" VerticalAlignment="Top" Width="65"/>
+        <Label x:Name="IpContent"  HorizontalAlignment="Left" Height="26" Margin="51,81,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label x:Name="PortContent" HorizontalAlignment="Left" Height="31" Margin="188,81,0,0" VerticalAlignment="Top" Width="65"/>
     </Grid>
 </Window>
